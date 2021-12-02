@@ -6,6 +6,7 @@ import Intro from "./Intro";
 import Cluedo from "./Cluedo/Cluedo";
 import Clues from "./Clues/Clues";
 import { useSettings } from "./context/useSettings";
+import axios from 'axios'
 
 export const CluesContext = React.createContext();
 
@@ -36,8 +37,14 @@ export const Main = () => {
 
   useEffect(() => {
     if (settings) {
-      // De settings zijn geladen, haal hier de aanwijzingen op en bewaar ze in de state (setClues)
-    }
+        axios.get(process.env.REACT_APP_BASE_URL + process.env.REACT_APP_URL_CLUES , {auth: settings.auth})  
+        .then(response => { 
+          //console.log(response.data)
+          setClues(response.data)
+             
+        })  
+        .catch((error) => console.log(error)  
+        )}
   }, [settings]);
 
   return (
@@ -53,7 +60,7 @@ export const Main = () => {
             <Switch>
               <Route path={["/", "/intro"]} exact render={() => <Intro />} />
               <Route path="/cluedo" render={() => <Cluedo />} />
-              <Route path="/clues" render={() => <Clues />} />
+              <Route path="/clues" render={(clues) => <Clues />} />
             </Switch>
           </CluesContext.Provider>
         </div>
